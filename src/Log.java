@@ -8,6 +8,7 @@ public class Log {
     CRITICAL
   }
 
+
   public static <T> void Console(Log.Level level, T... message) {
 
     System.out.print("| " + checkLevel(level));
