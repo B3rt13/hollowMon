@@ -1,19 +1,42 @@
-import HolloMon_Network.*;
+package HolloMon_Features;
+
+import java.util.ArrayList;
 import HolloMon_Log.*;
+import HolloMon_Network.*;
 
-public class HolloMenu  {
+public class HolloMenu {
 
-    private HollowClient m_Instance;
+    private HolloSetup m_connection;
 
+    public HolloMenu(HolloSetup connection) {
 
-    HollowMenu()
-    {
-        this->m_Instance = HollowClient.Instance();
-        HolloLog.Console(Level.INFO, "[HolloMon] -> ======================");
-        HolloLog.Console(Level.INFO, "[HolloMon] -> | Cards: ");
-        HolloLog.Console(Level.INFO, "[HolloMon] -> | ", m_Instance.Receive());
-        HolloLog.Console(Level.INFO, "[HolloMon] -> ======================");
+        m_connection = connection;
+
+        HolloLog.Console(
+            HolloLog.Level.INFO,
+            "[HolloMon] -> ============== Welcome To HolloMon, you're signed in as [",m_connection.GetUsername(),"] =============="
+        );
+        DisplayCards();
+        HolloLog.Console(
+            HolloLog.Level.INFO,
+            "[HolloMon] -> ==================================================="
+        );
     }
+
+    public void DisplayCards()
+    {
+        ArrayList<String> loginCards = HolloClient.Receive();
+        for(String item : loginCards){
+
+            switch(item)
+            {
+
+
+            }
+
+        }
+    }
+
 
 
 

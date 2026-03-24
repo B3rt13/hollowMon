@@ -3,21 +3,21 @@ package HolloMon_Network;
 import HolloMon_Log.HolloLog;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+
 
 public class HolloClient {
 
     private Socket holloMon_;
-    private boolean isConnected_;
-    public static BufferedReader holloIn_;
-    public static PrintWriter holloOut_;
+    public static BufferedReader holloIn;
+    public static PrintWriter holloOut;
 
     private static HolloClient s_holloMon = new HolloClient();
 
     private HolloClient() {
         this.holloMon_ = CreateSocket();
-        this.isConnected_ = CheckSocket();
-        this.holloIn_ = holloResponse();
-        this.holloOut_ = holloSend();
+        this.holloIn = HolloResponse();
+        this.holloOut = HolloSend();
         HolloLog.Console(
             HolloLog.Level.INFO,
             "HollomonHollomon Setup Complete! \n ------------"
@@ -28,24 +28,35 @@ public class HolloClient {
         return s_holloMon;
     }
 
-    public void Send(String message) {
-        holloOut_.println(message);
+    public static void Send(String message) {
+        holloOut.println(message);
     }
 
-    public void Receive() {
+    public static ArrayList<String> Receive() {
         try {
-            HolloLog.Console("| [Hollomon] ->", holloIn_.readLine());
+
+            ArrayList<String> resp = new ArrayList<>();
+            String currentResp;
+
+            while(true){
+                currentResp = holloIn.readLine();
+                if(currentResp.equals("OK")) break;
+                resp.add(currentResp);
+            }
+
+            return resp;
+
         } catch (IOException e) {
             HolloLog.Console(
                 HolloLog.Level.CRITICAL,
                 "IOException Attempting To Read Response."
             );
+            return null;
         }
     }
 
-    private BufferedReader holloResponse() {
+    private BufferedReader HolloResponse() {
         BufferedReader holloReader;
-
         try {
             HolloLog.Console(
                 HolloLog.Level.INFO,
@@ -65,7 +76,7 @@ public class HolloClient {
         return holloReader;
     }
 
-    private PrintWriter holloSend() {
+    private PrintWriter HolloSend() {
         PrintWriter holloSender;
 
         try {
@@ -109,5 +120,22 @@ public class HolloClient {
 
     private boolean CheckSocket() {
         return holloMon_.isClosed() ? false : true;
+    }
+
+    public boolean CloseSocket() {
+        try{
+            this.holloMon_.close();
+            return true;
+        }
+        catch(IOException e)
+        {
+            HolloLog.Console(
+                HolloLog.Level.CRITICAL,
+                "Critical Error Occurred, aborting process. \n"
+            );
+            return false;
+        }
+
+
     }
 }

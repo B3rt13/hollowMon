@@ -1,4 +1,5 @@
-import HolloMon_Log.HolloLog;
+import HolloMon_Features.*;
+import HolloMon_Log.*;
 import HolloMon_Network.*;
 
 public class main {

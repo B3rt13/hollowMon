@@ -1,7 +1,5 @@
 package HolloMon_Log;
 
-import java.io.*;
-
 public class HolloLog {
 
     public enum Level {
