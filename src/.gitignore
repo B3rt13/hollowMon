@@ -1,0 +1,24 @@
+# Compiled class files
+*.class
+
+# Logs
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# JVM crash logs
+hs_err_pid*
+
+# IDE files (optional but recommended)
+.vscode/
+.idea/
+*.iml
+
+# Build folders
+bin/
+build/
+out/
+target/
