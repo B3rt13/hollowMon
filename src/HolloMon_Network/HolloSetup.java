@@ -1,20 +1,23 @@
 package HolloMon_Network;
 
 import HolloMon_Log.*;
+import HolloMon_Features.*;
 import java.util.Scanner;
 
 public class HolloSetup {
 
-    private HolloClient holloMon;
+    private HolloClient m_holloMon;
+    private HolloMenu m_holloMenu
     private String username;
     private String password;
     private Scanner read = new Scanner(System.in);
 
     public HolloSetup() {
-        this.holloMon = HolloClient.holloInstance();
+        this.holloMon = HolloClient.HolloInstance();
         this.username = GetUsername();
         this.password = GetPassword();
         Login();
+        this->m_holloMenu = new HollowMenu();
     }
 
     private String GetUsername() {

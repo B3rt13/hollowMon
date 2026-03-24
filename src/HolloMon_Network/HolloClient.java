@@ -8,8 +8,8 @@ public class HolloClient {
 
     private Socket holloMon_;
     private boolean isConnected_;
-    private BufferedReader holloIn_;
-    private PrintWriter holloOut_;
+    public static BufferedReader holloIn_;
+    public static PrintWriter holloOut_;
 
     private static HolloClient s_holloMon = new HolloClient();
 
@@ -24,7 +24,7 @@ public class HolloClient {
         );
     }
 
-    public static HolloClient holloInstance() {
+    public static HolloClient HolloInstance() {
         return s_holloMon;
     }
 
