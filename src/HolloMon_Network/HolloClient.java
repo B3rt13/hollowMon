@@ -4,7 +4,7 @@ import HolloMon_Log.HolloLog;
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
-
+import java.util.List;
 
 public class HolloClient {
 
@@ -32,20 +32,18 @@ public class HolloClient {
         holloOut.println(message);
     }
 
-    public static ArrayList<String> Receive() {
+    public static <T> List<T> Receive() {
         try {
+            List<T> resp = new ArrayList<>();
+            T currentResp;
 
-            ArrayList<String> resp = new ArrayList<>();
-            String currentResp;
-
-            while(true){
-                currentResp = holloIn.readLine();
-                if(currentResp.equals("OK")) break;
+            while (true) {
+                currentResp = (T) holloIn.readLine();
+                if (currentResp.equals("OK")) break;
                 resp.add(currentResp);
             }
 
             return resp;
-
         } catch (IOException e) {
             HolloLog.Console(
                 HolloLog.Level.CRITICAL,
@@ -123,19 +121,15 @@ public class HolloClient {
     }
 
     public boolean CloseSocket() {
-        try{
+        try {
             this.holloMon_.close();
             return true;
-        }
-        catch(IOException e)
-        {
+        } catch (IOException e) {
             HolloLog.Console(
                 HolloLog.Level.CRITICAL,
                 "Critical Error Occurred, aborting process. \n"
             );
             return false;
         }
-
-
     }
 }
