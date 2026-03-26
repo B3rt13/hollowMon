@@ -16,10 +16,13 @@ public class HolloClient {
 
     private HolloClient() {
         this.holloMon_ = CreateSocket();
+
         this.holloIn = HolloResponse();
         this.holloOut = HolloSend();
+
         HolloLog.Console(HolloLog.Level.INFO, "Hollomon Client Complete!");
         HolloLog.Console(HolloLog.Level.INFO);
+
         System.out.println("====================================================");
     }
 
@@ -38,16 +41,20 @@ public class HolloClient {
 
             while (true) {
                 currentResp = holloIn.readLine();
+
+                if (currentResp == null) {
+                    HolloLog.Console(HolloLog.Level.WARNING, "Nothing Was Receieved From The Server");
+                    break;
+                }
+
                 if (currentResp.equals("OK")) break;
+
                 resp.add(currentResp);
             }
 
             return resp;
         } catch (IOException e) {
-            HolloLog.Console(
-                HolloLog.Level.CRITICAL,
-                "IOException Attempting To Read Response."
-            );
+            HolloLog.Console(HolloLog.Level.CRITICAL, "IOException Attempting To Read Response.");
             return null;
         }
     }
@@ -55,18 +62,12 @@ public class HolloClient {
     private BufferedReader HolloResponse() {
         BufferedReader holloReader;
         try {
-            HolloLog.Console(
-                HolloLog.Level.INFO,
-                "Creating Hollomon Input Gateway..."
-            );
+            HolloLog.Console(HolloLog.Level.INFO, "Creating Hollomon Input Gateway...");
             holloReader = new BufferedReader(
                 new InputStreamReader(holloMon_.getInputStream())
             );
         } catch (IOException e) {
-            HolloLog.Console(
-                HolloLog.Level.CRITICAL,
-                "Unexpected Error Creating Input Gateway."
-            );
+            HolloLog.Console(HolloLog.Level.CRITICAL, "Unexpected Error Creating Input Gateway.");
             return null;
         }
 
@@ -77,17 +78,11 @@ public class HolloClient {
         PrintWriter holloSender;
 
         try {
-            HolloLog.Console(
-                HolloLog.Level.INFO,
-                "Creating Hollomon Output Gateway..."
-            );
+            HolloLog.Console(HolloLog.Level.INFO, "Creating Hollomon Output Gateway...");
             HolloLog.Console(HolloLog.Level.INFO);
             holloSender = new PrintWriter(holloMon_.getOutputStream(), true);
         } catch (IOException e) {
-            HolloLog.Console(
-                HolloLog.Level.CRITICAL,
-                "Unexpected Error Creating Output Gateway"
-            );
+            HolloLog.Console(HolloLog.Level.CRITICAL, "Unexpected Error Creating Output Gateway");
             return null;
         }
 
@@ -109,10 +104,7 @@ public class HolloClient {
             HolloLog.Console(HolloLog.Level.INFO, "Connection Established!");
             HolloLog.Console(HolloLog.Level.INFO);
         } catch (IOException e) {
-            HolloLog.Console(
-                HolloLog.Level.CRITICAL,
-                "Unable to establish connection. Closing Socket.\n"
-            );
+            HolloLog.Console(HolloLog.Level.CRITICAL, "Unable to establish connection. Closing Socket.\n");
             tmpConnection = null;
             CloseSocket();
         }
@@ -121,16 +113,14 @@ public class HolloClient {
     }
 
 
-    public boolean CloseSocket() {
+    public void CloseSocket() {
         try {
             this.holloMon_.close();
-            return true;
+            HolloLog.Console(HolloLog.Level.INFO, "Socket Was Succesfully Closed!");
+
         } catch (IOException e) {
-            HolloLog.Console(
-                HolloLog.Level.CRITICAL,
-                "Critical Error Occurred, aborting process. \n"
-            );
-            return false;
+            HolloLog.Console(HolloLog.Level.CRITICAL, "Critical Error Occurred, aborting process. \n");
+            System.exit(0);
         }
     }
 }

@@ -2,7 +2,9 @@ package HolloMon_Network;
 
 import HolloMon_Features.*;
 import HolloMon_Log.*;
+
 import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class HolloSetup {
 
@@ -10,7 +12,7 @@ public class HolloSetup {
     private String username;
     private String password;
 
-    public static Scanner read = new Scanner(System.in);
+    private static Scanner read = new Scanner(System.in);
 
     public HolloSetup() {
 
@@ -69,4 +71,45 @@ public class HolloSetup {
             return false;
         }
     }
+
+
+    private static Scanner GetScanner()
+    {
+        return read;
+    }
+
+    public static void CloseScanner()
+    {
+        if(GetScanner() != null) GetScanner().close();
+        HolloLog.Console(HolloLog.Level.INFO, "Scanner Was Successfully Closed!");
+    }
+
+    public static int ReadInt(String message)
+    {
+        System.out.print("| [Hollomon] -> " + message);
+
+        try{
+            return Integer.parseInt(GetScanner().nextLine());
+        }
+        catch(NumberFormatException e)
+        {
+            return -1;
+        }
+    }
+
+    public static Long ReadLong(String message)
+    {
+        System.out.print("| [Hollomon] -> " + message);
+
+        try{
+            return Long.parseLong(GetScanner().nextLine());
+        }
+        catch(NumberFormatException e)
+        {
+            return -1L;
+        }
+    }
+
+
+
 }

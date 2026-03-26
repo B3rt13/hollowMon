@@ -38,9 +38,8 @@ public class HolloMenu extends HolloTrade {
             HolloLog.Console(HolloLog.Level.HOLLOMON, "[4]: Buy Card");
             HolloLog.Console(HolloLog.Level.HOLLOMON, "[5]: Sell Card");
             HolloLog.Console(HolloLog.Level.HOLLOMON, "[6]: Auto-Trade");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[7]: Exit\n");
-            System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter Your Choice: ");
-            int option = HolloSetup.read.nextInt();
+            HolloLog.Console(HolloLog.Level.HOLLOMON, "[7]: Exit");
+            int option = HolloSetup.ReadInt("\n| [Hollomon] ->" + " [!] Enter Your Choice [1-7]: ");
 
             switch (option) {
                 case 1: {
@@ -73,12 +72,14 @@ public class HolloMenu extends HolloTrade {
                     break;
                 }
                 case 7: {
+                    HolloLog.Console("| [HolloMon] -> =============================== I Hope You Enjoyed My Variation Of Hollomon! ======================================");
                     menu = false;
+                    HolloClient.HolloInstance().CloseSocket();
+                    HolloSetup.CloseScanner();
                     break;
                 }
 
                 default:
-
                     HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
                     HolloLog.Console(HolloLog.Level.HOLLOMON, "Please Enter A Valid Choice From [1-7]");
                     HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
@@ -122,28 +123,50 @@ public class HolloMenu extends HolloTrade {
 
     public void BuyChoice()
     {
-        System.out.print(HolloLog.Level.HOLLOMON + "Enter ID: ");
-        int id = HolloSetup.read.nextInt();
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "------------------------- Buy Card ---------------------------");
+
+        int id = HolloSetup.ReadInt("| [Hollomon] ->" + "  Enter ID: ");
+
+        boolean check = false;
 
         List<HolloCard> available = GetAvailable();
 
         for(HolloCard card : available)
+        {
+            if(card.GetID() == id) check = true;
+        }
 
-            boolean check = card.GetID() == id ? check = Buy(id) : check = false;
+        if(!check){
+            HolloLog.Console(HolloLog.Level.HOLLOMON, "Card: ID:[", id, "] Was Not Found!");
+            return;
+        }
 
-        check ? HolloLog.Console("Bought.") : HolloLog.Console("Not Bought.")
-
+        Buy(id);
 
     }
 
 
     public void SellChoice()
     {
-        System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter ID: ");
-        int id = HolloSetup.read.nextInt();
 
-        System.out.println(HolloLog.Level.HOLLOMON + "[!]: Enter Price You Wish To Sell At: ");
-        long price = HolloSetup.read.nextInt();
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "------------------------- Sell Card ---------------------------");
+
+        int id = HolloSetup.ReadInt("Enter ID: ");
+
+        long price = HolloSetup.ReadLong("Enter Price To Sell At: ");
+
+        boolean check = false;
+
+        List<HolloCard> mycards = GetMyCards();
+
+        for(HolloCard card : mycards)
+        {
+            if(card.GetID() == id) check = true;
+        }
+        if(!check){
+            HolloLog.Console(HolloLog.Level.HOLLOMON, "Card: ID:[", id, "] Was Not Found!");
+            return;
+        }
 
         Sell(id, price);
     }
@@ -186,9 +209,8 @@ public class HolloMenu extends HolloTrade {
 
         HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- [BUY / SELL] ----------------------------------------------");
         HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: BUY");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL\n");
-        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Option [1-2]: ");
-        int opt = HolloSetup.read.nextInt();
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL");
+        int opt = HolloSetup.ReadInt("Enter Option For AutoTrader [1-2]: ");
 
         HolloLog.Console("\n\n");
 
@@ -203,7 +225,7 @@ public class HolloMenu extends HolloTrade {
 
             case 2:
                 chosenCards = GetMyCards();
-                AutoBuy(chosenCards);
+                AutoSell(chosenCards);
                 break;
 
             default:

@@ -2,6 +2,7 @@ package HolloMon_Features;
 
 import HolloMon_Log.HolloLog;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,9 +79,11 @@ class HolloCard {
         .filter(card -> card.GetRank().equals(_filter))
         .collect(Collectors.toList());
 
-        if(filt.isEmpty()) return null;
+        if(filt.isEmpty()) return new ArrayList<>();
 
         return filt;
     }
+
+
 
 };
