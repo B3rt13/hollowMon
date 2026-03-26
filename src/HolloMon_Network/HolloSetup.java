@@ -7,26 +7,43 @@ import java.util.Scanner;
 public class HolloSetup {
 
     private HolloClient m_client;
-    private HolloMenu m_menu;
     private String username;
     private String password;
-    private Scanner read = new Scanner(System.in);
+
+    public Scanner read = new Scanner(System.in);
 
     public HolloSetup() {
+
         this.m_client = HolloClient.HolloInstance();
         this.username = SetUsername();
         this.password = SetPassword();
-        Login();
-        this.m_menu = new HolloMenu(this);
+
+        System.out.println("| \n===================================================");
+
+        if(!Login())
+        {
+            HolloLog.Console("[HolloMon] -> Unable To Authenticate User: [", GetUsername(), "] Please ensure you check your details.");
+            m_client.CloseSocket();
+            return;
+        }
+
+        HolloMenu Create = new HolloMenu(this);
     }
 
     private String SetUsername() {
-        HolloLog.Console("| [Hollomon] -> Enter Your Username");
+
+        System.out.println("|");
+        System.out.print("| [Hollomon] -> Enter Your Username: ");
+
         return read.nextLine();
     }
 
     private String SetPassword() {
-        HolloLog.Console("| [Hollomon] -> Enter Your Password");
+
+        System.out.println("|");
+
+        System.out.print("| [Hollomon] -> Enter Your Password: ");
+
         return read.nextLine();
     }
 
@@ -34,18 +51,22 @@ public class HolloSetup {
         return username;
     }
 
-    private void Login() {
+    private boolean Login() {
+
         HolloClient.Send(username);
         HolloClient.Send(password);
-        String resp;
 
         try{
-            resp = HolloClient.holloIn.readLine();
+
+            String resp = m_client.holloIn.readLine();
+
+            return resp.contains("No such user") ? false : true;
         }
         catch(Exception e)
         {
-            HolloLog.Console(HolloLog.Level.CRITICAL, "[Hollomon] -> Unable To authenticate. Closing Socket.");
-            m_client.CloseSocket();
+            HolloLog.Console(HolloLog.Level.CRITICAL, "[Hollomon] -> Error Occured. Closing Socket.");
+
+            return false;
         }
     }
 }

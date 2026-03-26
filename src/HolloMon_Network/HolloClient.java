@@ -18,10 +18,9 @@ public class HolloClient {
         this.holloMon_ = CreateSocket();
         this.holloIn = HolloResponse();
         this.holloOut = HolloSend();
-        HolloLog.Console(
-            HolloLog.Level.INFO,
-            "HollomonHollomon Setup Complete! \n ------------"
-        );
+        HolloLog.Console(HolloLog.Level.INFO, "Hollomon Client Complete!");
+        HolloLog.Console(HolloLog.Level.INFO);
+        System.out.println("====================================================");
     }
 
     public static HolloClient HolloInstance() {
@@ -32,13 +31,13 @@ public class HolloClient {
         holloOut.println(message);
     }
 
-    public static <T> List<T> Receive() {
+    public static List<String> Receive() {
         try {
-            List<T> resp = new ArrayList<>();
-            T currentResp;
+            List<String> resp = new ArrayList<>();
+            String currentResp;
 
             while (true) {
-                currentResp = (T) holloIn.readLine();
+                currentResp = holloIn.readLine();
                 if (currentResp.equals("OK")) break;
                 resp.add(currentResp);
             }
@@ -82,6 +81,7 @@ public class HolloClient {
                 HolloLog.Level.INFO,
                 "Creating Hollomon Output Gateway..."
             );
+            HolloLog.Console(HolloLog.Level.INFO);
             holloSender = new PrintWriter(holloMon_.getOutputStream(), true);
         } catch (IOException e) {
             HolloLog.Console(
@@ -99,26 +99,27 @@ public class HolloClient {
     }
 
     private Socket CreateSocket() {
-        HolloLog.Console("--- Attempting Connection to Hollomon Server ---");
+        HolloLog.Console("===== Attempting Connection to Hollomon Server =====");
+        HolloLog.Console(HolloLog.Level.INFO);
+
         Socket tmpConnection;
 
         try {
             tmpConnection = new Socket("netsrv.cim.rhul.ac.uk", 1812);
-            HolloLog.Console(HolloLog.Level.INFO, "Connection Established.");
+            HolloLog.Console(HolloLog.Level.INFO, "Connection Established!");
+            HolloLog.Console(HolloLog.Level.INFO);
         } catch (IOException e) {
             HolloLog.Console(
                 HolloLog.Level.CRITICAL,
-                "Unable to establish connection. Closing Socket. \n"
+                "Unable to establish connection. Closing Socket.\n"
             );
-            return null;
+            tmpConnection = null;
+            CloseSocket();
         }
 
         return tmpConnection;
     }
 
-    private boolean CheckSocket() {
-        return holloMon_.isClosed() ? false : true;
-    }
 
     public boolean CloseSocket() {
         try {

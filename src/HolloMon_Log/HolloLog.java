@@ -6,6 +6,7 @@ public class HolloLog {
         INFO,
         WARNING,
         CRITICAL,
+        HOLLOMON
     }
 
     public static <T> void Console(HolloLog.Level level, T... message) {
@@ -27,6 +28,8 @@ public class HolloLog {
                 return "[WARNING] -> ";
             case CRITICAL:
                 return "[CRITICAL] -> ";
+            case HOLLOMON:
+                return "[Hollomon] -> ";
             default:
                 return "";
         }
