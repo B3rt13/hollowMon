@@ -15,7 +15,12 @@ public class HolloTrade
 
     public boolean Buy(int id) {
         HolloClient.Send("BUY " + id);
-        return HolloClient.Receive().contains("OK");
+
+        List<String> check = HolloClient.Receive();
+
+        for(checked : check) HolloLog.Console(Log.Level.HOLLOMON, checked);
+
+        return false;
     }
 
     public boolean Sell(int id, long price) {
@@ -95,30 +100,27 @@ public class HolloTrade
             case 1: {
                 cardRank = CardRank.UNIQUE;
                 HolloLog.Console(HolloLog.Level.HOLLOMON, "[HolloTrader] -> You Have Selected: ", CardRank.UNIQUE);
-                break;
+                return cardRank;
             }
             case 2: {
                 cardRank = CardRank.RARE;
                 HolloLog.Console(HolloLog.Level.HOLLOMON, "[HolloTrader] -> You Have Selected: ", CardRank.RARE);
-                break;
+                return cardRank;
             }
             case 3: {
                 cardRank = CardRank.UNCOMMON;
                 HolloLog.Console(HolloLog.Level.HOLLOMON, "[HolloTrader] -> You Have Selected: ", CardRank.UNCOMMON);
-                break;
+                return cardRank;
             }
             case 4: {
                 cardRank = CardRank.COMMON;
                 HolloLog.Console(HolloLog.Level.HOLLOMON, "[HolloTrader] -> You Have Selected: ", CardRank.COMMON);
-                break;
+                return cardRank;
             }
             default: {
                 System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Please Enter A Valid Rarity... ");
                 return null;
             }
-
-            return cardRank;
-
         }
     }
 

@@ -125,7 +125,10 @@ public class HolloMenu extends HolloTrade {
         System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter ID: ");
         int id = HolloSetup.read.nextInt();
 
-        Buy(id);
+        if(!Buy(id)) return;
+
+
+
     }
 
 
