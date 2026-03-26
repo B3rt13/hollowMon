@@ -3,12 +3,16 @@ package HolloMon_Features;
 import HolloMon_Log.*;
 import HolloMon_Network.*;
 import HolloMon_Features.HolloCard;
+import HolloMon_Features.HolloTrade;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public class HolloMenu {
+
+
+public class HolloMenu extends HolloTrade {
+
     private HolloSetup m_connection;
     private List<HolloCard> m_cards;
     private List<HolloCard> av_cards;
@@ -16,7 +20,7 @@ public class HolloMenu {
 
     public HolloMenu(HolloSetup holloSetup) {
         this.m_connection = holloSetup;
-        this.m_cards = this.GetCards();
+        this.m_cards = GetCards();
         System.out.println("\n\n");
         HolloLog.Console("| [HolloMon] -> ============== Welcome To HolloMon, you're signed in as [", this.m_connection.GetUsername(), "] ==============");
         this.DisplayMenu();
@@ -36,11 +40,12 @@ public class HolloMenu {
             HolloLog.Console(HolloLog.Level.HOLLOMON, "[6]: Auto-Trade");
             HolloLog.Console(HolloLog.Level.HOLLOMON, "[7]: Exit\n");
             System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter Your Choice: ");
-            int option = this.m_connection.read.nextInt();
+            int option = HolloSetup.read.nextInt();
 
             switch (option) {
                 case 1: {
-                    this.ShowCards();
+                    m_cards = GetMyCards();
+                    ShowCards();
                     break;
                 }
                 case 2: {
@@ -53,19 +58,86 @@ public class HolloMenu {
                     ShowAvailable();
                     break;
                 }
+                case 4: {
+                    BuyChoice();
+                    break;
+                }
+
+                case 5: {
+                    SellChoice();
+                    break;
+                }
+
                 case 6: {
-                    SetAutoTrade();
+                    StartAutoTrade();
                     break;
                 }
                 case 7: {
                     menu = false;
                     break;
                 }
+
+                default:
+
+                    HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
+                    HolloLog.Console(HolloLog.Level.HOLLOMON, "Please Enter A Valid Choice From [1-7]");
+                    HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
+
             }
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "Please Enter A Valid Choice From [1-7]");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------------------------------------------------------");
         }
+    }
+
+    public List<HolloCard> GetCards() {
+
+        List<String> resp = HolloClient.Receive();
+
+        resp.removeIf(card -> card.equals("CARD"));
+
+        List<HolloCard> cards = new ArrayList<HolloCard>();
+
+        for (int i = 0; i < resp.size(); i += 4) {
+            int id = Integer.parseInt(resp.get(i));
+            String name = resp.get(i + 1);
+            CardRank cardRank = CardRank.valueOf(resp.get(i + 2));
+            long price = Long.parseLong(resp.get(i + 3));
+            cards.add(new HolloCard(id, name, cardRank, price));
+        }
+        return SortCards(cards);
+    }
+
+    public List<HolloCard> GetMyCards() {
+        HolloClient.Send("CARDS");
+        return GetCards();
+    }
+
+    public static int GetCredits() {
+        HolloClient.Send("CREDITS");
+        return Integer.parseInt(HolloClient.Receive().getFirst());
+    }
+
+    public List<HolloCard> GetAvailable() {
+        HolloClient.Send("OFFERS");
+        return this.GetCards();
+    }
+
+    public void BuyChoice()
+    {
+        System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter ID: ");
+        int id = HolloSetup.read.nextInt();
+
+        Buy(id);
+    }
+
+
+    public void SellChoice()
+    {
+        System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter ID: ");
+        int id = HolloSetup.read.nextInt();
+
+        System.out.println(HolloLog.Level.HOLLOMON + "[!]: Enter Price You Wish To Sell At: ");
+        long price = HolloSetup.read.nextInt();
+
+        Sell(id, price);
     }
 
     public void ShowCards() {
@@ -99,32 +171,36 @@ public class HolloMenu {
         HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------------------------------------------------------");
     }
 
-    public List<HolloCard> GetCards() {
 
-        List<String> resp = HolloClient.Receive();
+    public void StartAutoTrade()
+    {
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- [BUY / SELL] ----------------------------------------------");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: BUY");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL\n\n");
+        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Option [1-2]: ");
+        int opt = HolloSetup.read.nextInt();
 
-        resp.removeIf(card -> card.equals("CARD"));
+        List<HolloCard> chosenCards;
 
-        List<HolloCard> cards = new ArrayList<HolloCard>();
+        switch(opt)
+        {
+            case 1:
+                chosenCards = GetAvailable();
+                AutoBuy(chosenCards);
+                break;
 
-        for (int i = 0; i < resp.size(); i += 4) {
-            int id = Integer.parseInt(resp.get(i));
-            String name = resp.get(i + 1);
-            CardRank cardRank = CardRank.valueOf(resp.get(i + 2));
-            long price = Long.parseLong(resp.get(i + 3));
-            cards.add(new HolloCard(id, name, cardRank, price));
+            case 2:
+                chosenCards = GetMyCards();
+                AutoBuy(chosenCards);
+                break;
+
+            default:
+                System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Invalid Option Chosen. ");
+                return;
         }
-        return SortCards(cards);
-    }
 
-    public int GetCredits() {
-        HolloClient.Send("CREDITS");
-        return Integer.parseInt(HolloClient.Receive().getFirst());
-    }
 
-    public List<HolloCard> GetAvailable() {
-        HolloClient.Send("OFFERS");
-        return this.GetCards();
+
     }
 
     private List<HolloCard> SortCards(List<HolloCard> list) {
@@ -132,97 +208,6 @@ public class HolloMenu {
         return list.reversed();
     }
 
-    public void SetAutoTrade() {
-        CardRank cardRank;
-        int credits = this.GetCredits();
-
-
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------- Auto Trade Setup ----------------------------------------");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: UNIQUE");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: RARE");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[3]: UNCOMMON");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[4]: COMMON\n\n");
-        System.out.print(String.valueOf((Object)HolloLog.Level.HOLLOMON) + "[HolloTrader] -> Enter Rarity [1-4]: ");
-
-        int opt = this.m_connection.read.nextInt();
-
-        switch (opt) {
-            case 1: {
-                cardRank = CardRank.UNIQUE;
-                break;
-            }
-            case 2: {
-                cardRank = CardRank.RARE;
-                break;
-            }
-            case 3: {
-                cardRank = CardRank.UNCOMMON;
-                break;
-            }
-            case 4: {
-                cardRank = CardRank.COMMON;
-                break;
-            }
-            default: {
-                System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Please Enter A Valid Rarity... ");
-                return;
-            }
-        }
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Budget [Current Credits: ", credits, "] ----------------------------------------------");
-        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Amount You Wish To Spend: ");
-        long budget = this.m_connection.read.nextInt();
-
-        if (budget >= credits) {
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "Insufficient Funds.");
-            return;
-        }
-
-
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Sniper [Current Credits: ", credits, "] ----------------------------------------------");
-        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter The Price You Wish To Snipe For: ");
-
-
-        long price = this.m_connection.read.nextLong();
-
-        this.AutoBuy(cardRank, price, budget);
-
-
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- [BUY / SELL] ----------------------------------------------");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: BUY");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL\n\n");
-    }
-
-    public void AutoBuy(CardRank cardRank, long price, long budget) {
-
-        int check_budget = 0;
-
-        List<HolloCard> cards = HolloCard.GetSetByRank(GetAvailable(), cardRank);
-
-        if(cards.isEmpty()) return;
-
-        for(HolloCard card : cards) HolloCard.ShowCard(card);
-
-        for (HolloCard card : cards) {
-            int id = card.GetID();
-            long c_price = card.GetLastPrice();
-
-            if (!this.Buy(id)) {
-                HolloLog.Console(HolloLog.Level.HOLLOMON, "Unable To AutoBuy Card with ID: ", id);
-                break;
-            }
-
-            if (check_budget + c_price > budget) break;
-            check_budget += c_price;
-
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "Item Bought! ID: [", id, "], Price: [", c_price, "]");
-        }
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "Auto Buyer Finished!");
-    }
-
-    public boolean Buy(int id) {
-        HolloClient.Send("BUY " + id);
-        return HolloClient.Receive().contains("OK");
-    }
 
     public void ShowArt()
        {

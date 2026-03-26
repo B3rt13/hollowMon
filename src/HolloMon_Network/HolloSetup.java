@@ -10,7 +10,7 @@ public class HolloSetup {
     private String username;
     private String password;
 
-    public Scanner read = new Scanner(System.in);
+    public static Scanner read = new Scanner(System.in);
 
     public HolloSetup() {
 
