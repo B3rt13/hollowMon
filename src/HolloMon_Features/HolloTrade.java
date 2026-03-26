@@ -2,6 +2,7 @@ package HolloMon_Features;
 
 import HolloMon_Log.*;
 import HolloMon_Network.*;
+
 import HolloMon_Features.HolloCard;
 import HolloMon_Features.HolloMenu;
 
@@ -14,13 +15,9 @@ public class HolloTrade
 {
 
     public boolean Buy(int id) {
-        HolloClient.Send("BUY " + id);
 
-        List<String> check = HolloClient.Receive();
 
-        for(checked : check) HolloLog.Console(Log.Level.HOLLOMON, checked);
 
-        return false;
     }
 
     public boolean Sell(int id, long price) {
@@ -87,7 +84,9 @@ public class HolloTrade
     {
         CardRank cardRank;
 
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------- Auto Trade Setup ----------------------------------------");
+        HolloLog.Console("\n\n");
+
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "---------------------------------- [Auto Trade Setup] ----------------------------------------");
         HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: UNIQUE");
         HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: RARE");
         HolloLog.Console(HolloLog.Level.HOLLOMON, "[3]: UNCOMMON");
@@ -95,6 +94,8 @@ public class HolloTrade
         System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Rarity [1-4]: ");
 
         int opt = HolloSetup.read.nextInt();
+
+        HolloLog.Console("\n\n");
 
         switch (opt) {
             case 1: {
@@ -126,12 +127,17 @@ public class HolloTrade
 
     public long GetBudget()
     {
+        HolloLog.Console("\n\n");
+
         HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Budget [Current Credits: ", HolloMenu.GetCredits(), "] ----------------------------------------------");
+
         System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Amount You Wish To Spend: ");
 
         long budget =  HolloSetup.read.nextLong();
 
         HolloLog.Console(HolloLog.Level.HOLLOMON + "[HolloTrader] -> You've Selected: ", budget);
+
+        HolloLog.Console("\n\n");
 
 
         return budget >= HolloMenu.GetCredits() ? budget : 0;
@@ -139,10 +145,15 @@ public class HolloTrade
 
     public long GetPrice()
     {
+        HolloLog.Console("\n\n");
+
         HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Sniper [Current Credits: ", HolloMenu.GetCredits(), "] ----------------------------------------------");
-        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter The Price You Wish To Snipe For: ");
+
+        System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter The Price You Wish To [BUY/SELL] at: ");
 
         long price =  HolloSetup.read.nextLong();
+
+        HolloLog.Console("\n\n");
 
         return price > 0 ? price : 0;
 

@@ -117,16 +117,21 @@ public class HolloMenu extends HolloTrade {
 
     public List<HolloCard> GetAvailable() {
         HolloClient.Send("OFFERS");
-        return this.GetCards();
+        return GetCards();
     }
 
     public void BuyChoice()
     {
-        System.out.print(HolloLog.Level.HOLLOMON + "[!]: Enter ID: ");
+        System.out.print(HolloLog.Level.HOLLOMON + "Enter ID: ");
         int id = HolloSetup.read.nextInt();
 
-        if(!Buy(id)) return;
+        List<HolloCard> available = GetAvailable();
 
+        for(HolloCard card : available)
+
+            boolean check = card.GetID() == id ? check = Buy(id) : check = false;
+
+        check ? HolloLog.Console("Bought.") : HolloLog.Console("Not Bought.")
 
 
     }
@@ -177,11 +182,15 @@ public class HolloMenu extends HolloTrade {
 
     public void StartAutoTrade()
     {
+        HolloLog.Console("\n\n");
+
         HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- [BUY / SELL] ----------------------------------------------");
         HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: BUY");
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL\n\n");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: SELL\n");
         System.out.print(HolloLog.Level.HOLLOMON + "[HolloTrader] -> Enter Option [1-2]: ");
         int opt = HolloSetup.read.nextInt();
+
+        HolloLog.Console("\n\n");
 
         List<HolloCard> chosenCards;
 
