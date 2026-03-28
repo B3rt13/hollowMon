@@ -9,6 +9,7 @@ import java.util.InputMismatchException;
 public class HolloSetup {
 
     private HolloClient m_client;
+
     private String username;
     private String password;
 
@@ -17,6 +18,7 @@ public class HolloSetup {
     public HolloSetup() {
 
         this.m_client = HolloClient.HolloInstance();
+
         this.username = SetUsername();
         this.password = SetPassword();
 
@@ -32,51 +34,9 @@ public class HolloSetup {
         HolloMenu Create = new HolloMenu(this);
     }
 
-    private String SetUsername() {
-
-        System.out.println("|");
-        System.out.print("| [Hollomon] -> Enter Your Username: ");
-
-        return read.nextLine();
-    }
-
-    private String SetPassword() {
-
-        System.out.println("|");
-
-        System.out.print("| [Hollomon] -> Enter Your Password: ");
-
-        return read.nextLine();
-    }
-
-    public String GetUsername() {
-        return username;
-    }
-
-    private boolean Login() {
-
-        HolloClient.Send(username);
-        HolloClient.Send(password);
-
-        try{
-
-            String resp = m_client.holloIn.readLine();
-
-            return resp.contains("No such user") ? false : true;
-        }
-        catch(Exception e)
-        {
-            HolloLog.Console(HolloLog.Level.CRITICAL, "[Hollomon] -> Error Occured. Closing Socket.");
-
-            return false;
-        }
-    }
 
 
-    private static Scanner GetScanner()
-    {
-        return read;
-    }
+    // ==== Public Methods ===
 
     public static void CloseScanner()
     {
@@ -107,6 +67,60 @@ public class HolloSetup {
         catch(NumberFormatException e)
         {
             return -1L;
+        }
+    }
+
+    public String GetUsername() {
+        return username;
+    }
+
+
+    // ==== Private Methods ===
+
+
+    private static Scanner GetScanner()
+    {
+        return read;
+    }
+
+
+    private String SetUsername() {
+
+        System.out.println("|");
+        System.out.print("| [Hollomon] -> Enter Your Username: ");
+
+        return read.nextLine();
+    }
+
+
+
+    private String SetPassword() {
+
+        System.out.println("|");
+
+        System.out.print("| [Hollomon] -> Enter Your Password: ");
+
+        return read.nextLine();
+    }
+
+
+
+    private boolean Login() {
+
+        HolloClient.Send(username);
+        HolloClient.Send(password);
+
+        try{
+
+            String resp = m_client.hollomonIn.readLine();
+
+            return resp.contains("No such user") ? false : true;
+        }
+        catch(Exception e)
+        {
+            HolloLog.Console(HolloLog.Level.CRITICAL, "[Hollomon] -> Error Occured. Closing Socket.");
+
+            return false;
         }
     }
 

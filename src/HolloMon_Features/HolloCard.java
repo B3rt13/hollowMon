@@ -27,6 +27,8 @@ class HolloCard {
         this.last_price = last_price;
     }
 
+    // === Public Methods + Static at bottom this time for eyes sake ===
+
     public int GetID() {
         return this.id;
     }

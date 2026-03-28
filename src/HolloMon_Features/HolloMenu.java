@@ -2,8 +2,7 @@ package HolloMon_Features;
 
 import HolloMon_Log.*;
 import HolloMon_Network.*;
-import HolloMon_Features.HolloCard;
-import HolloMon_Features.HolloTrade;
+import HolloMon_Features.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,18 +26,15 @@ public class HolloMenu extends HolloTrade {
         HolloLog.Console("| [HolloMon] -> ======================================================================================");
     }
 
+    // === Public Methods ===
+
     public void DisplayMenu() {
         boolean menu = true;
         while (menu) {
+
             this.ShowArt();
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "--- Hollomon Options ---");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: Show Cards");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: Show Credits");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[3]: List Available");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[4]: Buy Card");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[5]: Sell Card");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[6]: Auto-Trade");
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "[7]: Exit");
+            this.ShowOptions();
+
             int option = HolloSetup.ReadInt("\n| [Hollomon] ->" + " [!] Enter Your Choice [1-7]: ");
 
             switch (option) {
@@ -88,6 +84,34 @@ public class HolloMenu extends HolloTrade {
         }
     }
 
+    public void ShowOptions()
+    {
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "--- Hollomon Options ---");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[1]: Show Cards");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[2]: Show Credits");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[3]: List Available");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[4]: Buy Card");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[5]: Sell Card");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[6]: Auto-Trade");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "[7]: Exit");
+    }
+
+
+    public List<HolloCard> GetMyCards() {
+        HolloClient.Send("CARDS");
+        return GetCards();
+    }
+
+    public int GetCredits() {
+        HolloClient.Send("CREDITS");
+        return Integer.parseInt(HolloClient.Receive().getFirst());
+    }
+
+    public List<HolloCard> GetAvailable() {
+        HolloClient.Send("OFFERS");
+        return GetCards();
+    }
+
     public List<HolloCard> GetCards() {
 
         List<String> resp = HolloClient.Receive();
@@ -104,21 +128,6 @@ public class HolloMenu extends HolloTrade {
             cards.add(new HolloCard(id, name, cardRank, price));
         }
         return SortCards(cards);
-    }
-
-    public List<HolloCard> GetMyCards() {
-        HolloClient.Send("CARDS");
-        return GetCards();
-    }
-
-    public static int GetCredits() {
-        HolloClient.Send("CREDITS");
-        return Integer.parseInt(HolloClient.Receive().getFirst());
-    }
-
-    public List<HolloCard> GetAvailable() {
-        HolloClient.Send("OFFERS");
-        return GetCards();
     }
 
     public void BuyChoice()
@@ -220,12 +229,12 @@ public class HolloMenu extends HolloTrade {
         {
             case 1:
                 chosenCards = GetAvailable();
-                AutoBuy(chosenCards);
+                AutoBuy(chosenCards, GetCredits());
                 break;
 
             case 2:
                 chosenCards = GetMyCards();
-                AutoSell(chosenCards);
+                AutoSell(chosenCards, GetCredits());
                 break;
 
             default:
@@ -237,11 +246,12 @@ public class HolloMenu extends HolloTrade {
 
     }
 
+    // === Private Methods + Ugly Show Art Method... ===
+
     private List<HolloCard> SortCards(List<HolloCard> list) {
         list.sort(Comparator.comparingInt(holloCard -> holloCard.GetRank().ordinal()));
         return list.reversed();
     }
-
 
     public void ShowArt()
        {
@@ -262,4 +272,5 @@ public class HolloMenu extends HolloTrade {
            '---'                                           '---'
            """); //https://patorjk.com/software/taag/#p=display&f=Graffiti&t=Type+Something+&x=none&v=4&h=4&w=80&we=false (had to replace weird characters throwing off print statement :( )
        }
+
 }

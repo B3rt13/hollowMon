@@ -1,0 +1,96 @@
+
+# Code Overview
+
+    My design for the project took a semi-modular approach, while I felt like interface implementation was not necessary in my case as methods don't really fit interface :"creation" parameters; all my methods were apart from their organised classes, with a focus on Singleton use and Inheritance.
+
+
+    HolloMon_Network/
+
+    [HolloClient.java] - This class created was handled as a singleton which managed the actual connection to the Hollomon servers; its focus was primarily establishing and creating handles for the socket, whether that be written to or received from.
+
+    [HolloSetup.java] | This class handles the user login process, along with ways for handling arbitrary user input, along with logging in the user.
+
+
+
+    HolloMon_Log/
+
+    [HolloLog.java] - This class serves the purpose of debugging, but also a way for the user to see what “backend” they are dealing with, whether that is the actual Hollomon command line interface, or the client side of it all.
+
+
+
+    HolloMon_Features/
+
+    [HolloMenu.java] - This class handled the menu options for the user, stored the user's credits, cards, available cards and displayed art. It used some features as part of HolloMon_Network.
+
+    [HolloCard.java] - This class handled the card implementation for Hollomon, including features such as sorting a list of those objects based upon specific queries.
+
+    [HolloTrade.java] - This class handles all Hollomon trading options, including the optional Hollomon Auto-Trader: Auto-Buy, Auto-Sell, Sell, Buy.
+
+
+
+
+
+# Lecture Concepts
+
+    Classes / Inheritance
+
+    This keeps the entire client-program modular, which allows me to make quick changes to specific classes as they are all compartmentalized in their own modules. Inheritance also supports this, as I do not have to constantly create new objects for specific features. (See HolloMon_Features/HolloMon_Menu - Line 13)
+
+    Lecture (8) on Inheritance –  17/02/26
+
+    ---
+
+    Streams (Lists)
+
+    Streams helped organise the lists of cards in my case, specifically when dealing with sorting rarity as outlined in the criteria for displaying the cards. This allowed me to quickly filter out cards based on specific queries. (See HolloMon_Features/HolloCard.java - Line 60)
+
+    Lecture (11) on Streams –  03/03/26
+
+    ---
+
+    Enums
+
+    Enums were useful in the case of my logging, but also card rarity. It allowed me to create a specific object for a card's rarity based on its rarity. It also allowed me to sort out logging levels. (See HolloMon_Features/HolloCard.java - Line 9 & HolloMon_Log/HolloLog.java - Line 7)
+
+    Lecture (1) on Enums –  20/01/26
+
+    ---
+
+    Generics
+
+    Generics were a useful way of parsing data for debugging purposes, for example if I wanted to see the values of a specific variable, but the types were disparate, it would be able to handle it correctly. (See HolloMon_Log/HolloLog.java - Line 14)
+
+    (I am aware parameter packing appears here too, however it was not covered in lecture material so unsure if to include.)
+
+    Lecture (5) on Polymorphism – 03/02/26
+
+    ---
+
+    Packages
+
+    Packaging allowed me to create packages as a form of modularity for the entire program; it helped containerise specific modules into their own sub-categories and import only what is needed. (See at the beginning of any HolloMon.*.java)
+
+    Lecture (9) on Packages – 24/02/26
+
+    ---
+
+    The use of some features such as interfaces, or runnable objects I did consider. However, as stated previously interfaces were not needed as method definitions remained static and did not need changing across the client. Runnable objects were also considered, however once again there was no need implement runnables in this scenario. It might've been possible to also include threading when setting up the server and gathering user-credentials, however seemed too time-consuming to develop thread-safetey for such redundant time-differences.
+
+# Testing Strategy
+
+    Logging
+
+    My testing strategy was extremely optimised by the implementation of a logging feature; it allowed me to see where my variables values changed at what point of execution but also see specific warning signs that I implemented for debugging purposes. Very useful with testing edge-cases specifically, such as truncation of integers-longs, when dealing with server parameters and user input.
+
+    IDE Debugger
+
+    The approach towards testing was also amplified by my IDE’s debugging feature, which is a standard step over / step into process, which was also paired with breakpoints to see where an exception was thrown at a specific point of execution, variable null values, and such.
+
+    My tests were implemented throughout my client, for example in the case of HolloMon_Network/HolloSetup.java, I tested the edge case of arbitrary user credentials, I padded this area to implement a check for those cases where an exception was thrown and repeated this test with parsing in different primitive/non-primitive types. In which, any form of input is now dealt with.
+
+
+
+
+# Use of AI
+
+    While I was worried I was going to get marked down for such, I did not use any AI. While I understand it is used in the workplace for increasing productivity of Software Engineers, for example, I feel as if I learn best in the “rawest” approach. When the time comes for real-world use cases, I am sure I will be using A.I. to ensure the most productive role.

@@ -2,6 +2,8 @@ package HolloMon_Log;
 
 public class HolloLog {
 
+    // === Public Methods ===
+
     public enum Level {
         INFO,
         WARNING,
@@ -20,7 +22,10 @@ public class HolloLog {
         System.out.println();
     }
 
-    public static String checkLevel(Level lvl) {
+
+    // === Private Methods ===
+
+    private static String checkLevel(Level lvl) {
         switch (lvl) {
             case INFO:
                 return "[INFO] -> ";

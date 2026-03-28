@@ -2,24 +2,25 @@ package HolloMon_Features;
 
 import HolloMon_Log.*;
 import HolloMon_Network.*;
-
-import HolloMon_Features.HolloCard;
-import HolloMon_Features.HolloMenu;
+import HolloMon_Features.*
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 
-public class HolloTrade
+class HolloTrade
 {
+
+    // No constructor needed, will extend
+
+    // === Public Methods ===
 
     public boolean Buy(int id) {
 
         HolloClient.Send("BUY" + id);
 
         boolean check = HolloClient.Receive().contains("ERROR");
-
         if(check) {
             HolloLog.Console(HolloLog.Level.HOLLOMON, "Card: ID: [", id, "] Was Not Bought!");
             return check;
@@ -32,8 +33,8 @@ public class HolloTrade
     public boolean Sell(int id, long price) {
 
         HolloClient.Send("SELL " + id + " " + price);
-        boolean check = HolloClient.Receive().contains("ERROR");
 
+        boolean check = HolloClient.Receive().contains("ERROR");
         if(check) {
             HolloLog.Console(HolloLog.Level.HOLLOMON, "Card: ID: [", id, "] Was Not Listed!");
             return check;
@@ -44,18 +45,23 @@ public class HolloTrade
     }
 
 
-    public void AutoBuy(List<HolloCard> cards) {
+    public void AutoBuy(List<HolloCard> cards, int credits) {
+
+        int bought = 0;
 
         CardRank targetRank = GetRarity();
-        long price = GetPrice();
-        int bought = 0;
+        if(targetRank == null) return;
+
+        long price = GetPrice(credits);
+        if(targetRank == null) return;
+
 
         List<HolloCard> filter = HolloCard.GetSetByRank(cards, targetRank);
         filter.removeIf(card -> card.GetLastPrice() > price);
 
-        if(filter.isEmpty())
-        {
-            HolloLog.Console(HolloLog.Level.HOLLOMON, "No Cards Match These Arguments!");
+        if(filter.isEmpty()) {
+            HolloLog.Console("No Cards Match These Arguments!");
+            return;
         }
 
         for (HolloCard card : filter){
@@ -68,16 +74,22 @@ public class HolloTrade
         HolloLog.Console(HolloLog.Level.HOLLOMON, "AutoBuyer Finished! Items Bought: [", bought, "]");
     }
 
-    public void AutoSell(List<HolloCard> cards) {
+    public void AutoSell(List<HolloCard> cards, int credits) {
+
+        int listed = 0;
 
         CardRank targetRank = GetRarity();
-        long price = GetPrice();
-        int listed = 0;
+        if(targetRank == null) return;
+
+        long price = GetPrice(credits);
+        if(price == 0L) return;
 
         List<HolloCard> filter = HolloCard.GetSetByRank(cards, targetRank);
 
-
-        if(filter.isEmpty()) return;
+        if(filter.isEmpty()) {
+            HolloLog.Console("No Cards Match These Arguments!");
+            return;
+        }
 
         for (HolloCard card : filter){
 
@@ -125,33 +137,39 @@ public class HolloTrade
                 return cardRank;
             }
             default: {
-                System.out.print(HolloLog.Level.HOLLOMON + "Please Enter A Valid Rarity... ");
+                HolloLog.Console(HolloLog.Level.HOLLOMON, "Please Select A Valid Rarity.");
                 return null;
             }
         }
     }
 
-    public long GetBudget()
+    public long GetBudget(int credits)
     {
 
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Budget [Current Credits: ", HolloMenu.GetCredits(), "] ----------------------------------------------");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Budget [Current Credits: ", credits, "] ----------------------------------------------");
 
         long budget = HolloSetup.ReadLong("Enter Amount You Wish To Spend: ");
 
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "You've Selected: ", budget);
+        if(budget != -1L) return budget > credits ? budget : 0;
 
 
-        return budget > HolloMenu.GetCredits() ? budget : 0;
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "Invalid Budget Chosen.");
+
+        return 0;
+
     }
 
-    public long GetPrice()
+    public long GetPrice(int credits)
     {
 
-        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Price [Current Credits: ", HolloMenu.GetCredits(), "] ----------------------------------------------");
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "--------------------------------------- Price [Current Credits: ", credits, "] ----------------------------------------------");
         long price =  HolloSetup.ReadLong("Enter The Price You Wish To [BUY/SELL] at: ");
 
+        if(price != -1L) return price > 0L ? price : 0L;
 
-        return price > 0 ? price : 0;
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "Invalid Price Chosen.");
+
+        return 0;
 
     }
 
