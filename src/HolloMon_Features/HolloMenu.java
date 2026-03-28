@@ -71,7 +71,9 @@ public class HolloMenu extends HolloTrade {
                     HolloLog.Console("| [HolloMon] -> =============================== I Hope You Enjoyed My Variation Of Hollomon! ======================================");
                     menu = false;
                     HolloClient.HolloInstance().CloseSocket();
+                    HolloClient.HolloInstance().CloseBuffers();
                     HolloSetup.CloseScanner();
+
                     break;
                 }
 

@@ -75,7 +75,20 @@ public class HolloClient {
         }
     }
 
-
+    public void CloseBuffers()
+    {
+        try
+        {
+            hollomonIn.close();
+            hollomonOut.close();
+            HolloLog.Console(HolloLog.Level.INFO, "Buffers Were Succesfully Closed!");
+        }
+        catch (IOException e)
+        {
+            HolloLog.Console(HolloLog.Level.CRITICAL, "Unable To Close Buffers.");
+            System.exit(0);
+        }
+    }
 
 
 

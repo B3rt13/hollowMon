@@ -28,6 +28,8 @@ public class HolloSetup {
         {
             HolloLog.Console("[HolloMon] -> Unable To Authenticate User: [", GetUsername(), "] Please ensure you check your details.");
             m_client.CloseSocket();
+            m_client.CloseBuffers();
+            CloseScanner();
             return;
         }
 
