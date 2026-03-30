@@ -47,10 +47,7 @@ public class HolloClient {
             while (true) {
                 currentResp = hollomonIn.readLine();
 
-                if (currentResp == null) {
-                    HolloLog.Console(HolloLog.Level.WARNING, "Nothing Was Receieved From The Server");
-                    break;
-                }
+                if (currentResp == null) break;
 
                 if (currentResp.equals("OK")) break;
 

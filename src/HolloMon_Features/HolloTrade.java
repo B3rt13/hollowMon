@@ -1,8 +1,10 @@
 package HolloMon_Features;
 
 import HolloMon_Log.*;
+import HolloMon_Log.HolloLog.Level;
 import HolloMon_Network.*;
-import HolloMon_Features.*;
+
+import HolloMon_Features.HolloMenu;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,7 +20,7 @@ class HolloTrade
 
     public boolean Buy(int id) {
 
-        HolloClient.Send("BUY" + id);
+        HolloClient.Send("BUY " + id);
 
         boolean check = HolloClient.Receive().contains("ERROR");
         if(check) {
@@ -26,6 +28,7 @@ class HolloTrade
             return check;
         }
 
+        HolloLog.Console(HolloLog.Level.HOLLOMON, "Card: ID: [", id, "] Was Bought!");
         return check;
 
     }
@@ -53,20 +56,23 @@ class HolloTrade
         if(targetRank == null) return;
 
         long price = GetPrice(credits);
-        if(targetRank == null) return;
+        if(price == 0L) return;
 
 
         List<HolloCard> filter = HolloCard.GetSetByRank(cards, targetRank);
-        filter.removeIf(card -> card.GetLastPrice() > price);
 
         if(filter.isEmpty()) {
             HolloLog.Console("No Cards Match These Arguments!");
             return;
         }
 
+
+        filter.removeIf(card -> card.GetLastPrice() > price);
+
         for (HolloCard card : filter){
 
             int id = card.GetID();
+            HolloLog.Console(Level.HOLLOMON, "ID: ", id);
             Buy(id);
             bought++;
         }
